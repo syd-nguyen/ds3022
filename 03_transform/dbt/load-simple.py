@@ -2,6 +2,7 @@ from pathlib import Path
 import requests
 
 URL = "https://s3.amazonaws.com/uvasds-data/taxi/yellow_tripdata_2025-{i:02d}.parquet"
+#{i:02d} means take the variable i and make it a two digit number
 DATA_DIR = Path(__file__).parent / "data"
 DATA_DIR.mkdir(exist_ok=True)
 
