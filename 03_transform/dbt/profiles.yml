@@ -1,0 +1,17 @@
+nyc_taxi_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: nyc_taxi.duckdb
+      threads: 4
+      extensions:
+        - httpfs
+        - parquet
+    settings:
+      http_retries: 8
+      http_retry_wait_ms: 3000
+      http_retry_backoff: 4
+      http_timeout: 60000
+    
+
