@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 version: 2
 
 sources:
@@ -61,3 +62,68 @@ sources:
           "Outside of NYC", not real places.
         meta:
           external_location: "read_csv('https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv', header = true)"
+=======
+version: 2
+
+sources:
+  - name: raw
+    tables:
+      - name: yellow_tripdata
+        description: >
+          Raw NYC yellow taxi trip records for all 12 months of 2025, read
+          directly from the NYC TLC's public HTTPS parquet host — no
+          download, load step, or S3 bucket required.
+        meta:
+          # dbt-duckdb's "external_location" tells the source where the
+          # actual file lives. It accepts a plain file path, and DuckDB's
+          # httpfs/parquet extensions let that same key point at a URL or
+          # S3 path instead — dbt builds a view over it either way:
+          #
+          #   local file:   external_location: "data/yellow_tripdata.parquet"
+          #   remote HTTPS: external_location: "https://.../yellow_tripdata_2024-01.parquet"
+          #   S3 bucket:    external_location: "s3://my-bucket/yellow_tripdata.parquet"
+          #
+          # We're using the remote HTTPS form here so nobody has to
+          # download the file first — dbt-duckdb streams it on demand.
+          #
+          # Covering a RANGE of months/years instead of one file works
+          # differently depending on where the files live:
+          #
+          #   local file or S3 (both support directory listing, so glob
+          #   wildcards work):
+          #     external_location: "data/yellow_tripdata_2024-*.parquet"          # all of 2024
+          #     external_location: "data/yellow_tripdata_202[34]-*.parquet"       # 2023 and 2024
+          #     external_location: "data/yellow_tripdata_2024-{01,02,03}.parquet" # Jan-Mar 2024
+          #     external_location: "s3://my-bucket/yellow_tripdata_2024-*.parquet"
+          #
+          #   remote HTTPS (a plain web server has no directory listing,
+          #   so wildcards don't work here): pass an explicit list of
+          #   URLs to DuckDB's read_parquet() instead, one per file —
+          #   mix years/months freely since each URL is spelled out. That's
+          #   what we do below for all 12 months of 2025.
+          # external_location: >
+          #   read_parquet([
+          #     'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-01.parquet',
+          #     'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-02.parquet',
+          #     'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-03.parquet',
+          #     'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-04.parquet',
+          #     'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-05.parquet',
+          #     'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-06.parquet',
+          #     'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-07.parquet',
+          #     'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-08.parquet',
+          #     'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-09.parquet',
+          #     'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-10.parquet',
+          #     'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-11.parquet',
+          #     'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-12.parquet'
+          #   ])
+          external_location: "data/yellow_tripdata_2025-*.parquet"
+
+      - name: taxi_zone_lookup
+        description: >
+          TLC's lookup of the 265 taxi zones (LocationID -> Borough, Zone).
+          The trip data only carries the numeric pickup/dropoff IDs; this is
+          how they get human-readable names. 264 and 265 are "Unknown" and
+          "Outside of NYC", not real places.
+        meta:
+          external_location: "read_csv('https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv', header = true)"
+>>>>>>> c7f9f5c1cdb94abbf9e96287d18a07d39cf7e6a6

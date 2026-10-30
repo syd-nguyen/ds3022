@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: 'nyc_taxi_dbt'
 version: '1.0.0'
 config-version: 2
@@ -15,3 +16,21 @@ models:
     marts:
       +materialized: table
     # mart_daily_summary (aggregation layer) added in a later class — see future/
+=======
+name: 'nyc_taxi_dbt'
+version: '1.0.0'
+config-version: 2
+
+profile: 'nyc_taxi_dbt'
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  nyc_taxi_dbt:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: view
+>>>>>>> c7f9f5c1cdb94abbf9e96287d18a07d39cf7e6a6
